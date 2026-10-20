@@ -5,94 +5,102 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifndef NUM_RECEIVERS
+#define NUM_RECEIVERS 2
+#endif
+
+#ifndef NUM_COMMANDS
+#define NUM_COMMANDS 100
+#endif
+
 #define SEND_INTERVAL (10 * CLOCK_SECOND)
+#define START_DELAY   (15 * CLOCK_SECOND)
 
-/* Cooja native mote IPv6 addresses */
-#define RECEIVER_1 "coap://[fe80::202:2:2:2]"
-#define RECEIVER_2 "coap://[fe80::203:3:3:3]"
-
-PROCESS(coap_sender_process, "CoAP Sender");
+PROCESS(coap_sender_process, "Scalable CoAP Sender");
 AUTOSTART_PROCESSES(&coap_sender_process);
 
 static struct etimer timer;
-static coap_endpoint_t receiver_1_ep;
-static coap_endpoint_t receiver_2_ep;
+static coap_endpoint_t endpoint;
 static coap_message_t request[1];
+
+static unsigned long success_count;
+static unsigned long timeout_count;
 
 static void
 response_handler(coap_message_t *response)
 {
-  const uint8_t *payload;
-  int len;
-
   if(response == NULL) {
-    printf("CoAP request timed out\n");
-    return;
+    timeout_count++;
+    printf("RESULT,TIMEOUT\n");
+  } else {
+    success_count++;
+    printf("RESULT,RESPONSE\n");
   }
-
-  len = coap_get_payload(response, &payload);
-
-  printf("CoAP response: %.*s\n",
-         len, len > 0 ? (const char *)payload : "");
 }
 
 PROCESS_THREAD(coap_sender_process, ev, data)
 {
+  static int command;
+  static int receiver;
+  static int mote_id;
+  static char uri[80];
+  static const char payload[] = "LIGHT_ON";
+
   PROCESS_BEGIN();
 
-  printf("CoAP sender started\n");
+  printf("EXPERIMENT_START,receivers=%d,commands=%d\n",
+         NUM_RECEIVERS, NUM_COMMANDS);
 
-  coap_endpoint_parse(RECEIVER_1,
-                      strlen(RECEIVER_1),
-                      &receiver_1_ep);
-
-  coap_endpoint_parse(RECEIVER_2,
-                      strlen(RECEIVER_2),
-                      &receiver_2_ep);
-
-  /* Allow receivers to initialize */
-  etimer_set(&timer, 15 * CLOCK_SECOND);
+  etimer_set(&timer, START_DELAY);
   PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
 
-  while(1) {
+  for(command = 1; command <= NUM_COMMANDS; command++) {
 
-    printf("Sending LIGHT_ON to Receiver 1\n");
+    for(receiver = 0; receiver < NUM_RECEIVERS; receiver++) {
 
-    coap_init_message(request,
-                      COAP_TYPE_CON,
-                      COAP_POST,
-                      0);
+      mote_id = receiver + 2;
 
-    coap_set_header_uri_path(request, "light");
+      /*
+       * Default Cooja native mote IPv6 addressing.
+       * Confirm the addresses in your receiver logs.
+       */
+      snprintf(uri, sizeof(uri),
+               "coap://[fe80::%x:%x:%x:%x]",
+               0x200 + mote_id,
+               mote_id,
+               mote_id,
+               mote_id);
 
-    coap_set_payload(request,
-                     (uint8_t *)"LIGHT_ON",
-                     strlen("LIGHT_ON"));
+      if(!coap_endpoint_parse(uri, strlen(uri), &endpoint)) {
+        printf("ERROR,ENDPOINT,%d\n", mote_id);
+        continue;
+      }
 
-    COAP_BLOCKING_REQUEST(&receiver_1_ep,
-                          request,
-                          response_handler);
+      coap_init_message(request,
+                        COAP_TYPE_CON,
+                        COAP_POST,
+                        0);
 
-    printf("Sending LIGHT_ON to Receiver 2\n");
+      coap_set_header_uri_path(request, "light");
 
-    coap_init_message(request,
-                      COAP_TYPE_CON,
-                      COAP_POST,
-                      0);
+      coap_set_payload(request,
+                       (uint8_t *)payload,
+                       sizeof(payload) - 1);
 
-    coap_set_header_uri_path(request, "light");
+      printf("SEND,command=%d,receiver=%d\n",
+             command, mote_id);
 
-    coap_set_payload(request,
-                     (uint8_t *)"LIGHT_ON",
-                     strlen("LIGHT_ON"));
-
-    COAP_BLOCKING_REQUEST(&receiver_2_ep,
-                          request,
-                          response_handler);
+      COAP_BLOCKING_REQUEST(&endpoint,
+                            request,
+                            response_handler);
+    }
 
     etimer_set(&timer, SEND_INTERVAL);
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
   }
+
+  printf("EXPERIMENT_END,success=%lu,timeouts=%lu\n",
+         success_count, timeout_count);
 
   PROCESS_END();
 }
