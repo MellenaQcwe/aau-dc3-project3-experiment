@@ -1,0 +1,6 @@
+capture,receivers,captured_frames,captured_frame_bytes,decoded_coap_frames,decoded_coap_frame_bytes,decoded_coap_requests,decoded_coap_responses,decoded_coap_error_responses,unclassified_coap_frames
+coap_n02.pcap,2,162997,4399319,400,18000,200,200,0,0
+coap_n04.pcap,4,214033,5775691,800,36000,400,400,0,0
+coap_n08.pcap,8,252597,6813709,1601,72039,800,801,0,0
+coap_n16.pcap,16,272662,7349054,3202,144078,1600,1602,0,0
+coap_n32.pcap,32,274512,7386250,6412,288504,3203,3209,0,0

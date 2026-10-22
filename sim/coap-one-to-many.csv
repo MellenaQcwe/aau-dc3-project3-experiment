@@ -1,2 +1,0 @@
-run,receivers,command_name,commands,coap_requests,coap_responses,bytes_per_request,bytes_per_response,total_bytes
-1,2,LIGHT_ON,100,200,200,51,39,18000
