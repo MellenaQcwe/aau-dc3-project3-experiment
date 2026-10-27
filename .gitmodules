@@ -1,0 +1,4 @@
+[submodule "guntzer-contiki-ng"]
+	path = guntzer-contiki-ng
+	url = https://github.com/MellenaQcwe/guntzer-contiki-ng.git
+	branch = feature/oscore-cooja-fixes
