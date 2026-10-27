@@ -1,0 +1,20 @@
+CONTIKI_PROJECT = sender receiver
+
+all: $(CONTIKI_PROJECT)
+
+CONTIKI = ../../../guntzer-contiki-ng
+
+MODULES += os/net/app-layer/coap
+
+MAKE_WITH_OSCORE = 1
+
+CFLAGS += -DWITH_OSCORE
+CFLAGS += -DOSCORE_EP_CTX_ASSOCIATION
+CFLAGS += -DSHA2_USE_INTTYPES_H
+CFLAGS += -DWITH_SHA256
+CFLAGS += -DHAVE_ASSERT_H
+
+RECEIVER_ID ?= 2
+CFLAGS += -DRECEIVER_ID=$(RECEIVER_ID)
+
+include $(CONTIKI)/Makefile.include
