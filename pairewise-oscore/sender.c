@@ -126,13 +126,12 @@ PROCESS_THREAD(oscore_sender_process, ev, data)
         sizeof(payload) - 1
       );
 
-      printf("OSCORE_SEND,command=%d,receiver=%d\n",
-             command, i + 2);
+      printf("OSCORE_SEND,command=%d,receiver_id=%d\n", command, i + 2);
 
       COAP_BLOCKING_REQUEST(
-        &endpoints[i],
-        request,
-        response_handler
+          &endpoints[i],
+          request,
+          response_handler
       );
     }
 
@@ -140,8 +139,8 @@ PROCESS_THREAD(oscore_sender_process, ev, data)
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
   }
 
-  printf("PAIRWISE_OSCORE_END,responses=%lu,timeouts=%lu\n",
-         response_count, timeout_count);
+  printf("PAIRWISE_OSCORE_END,receivers=%d,responses=%lu,timeouts=%lu\n",
+         NUM_RECEIVERS, response_count, timeout_count);
 
   PROCESS_END();
 }
