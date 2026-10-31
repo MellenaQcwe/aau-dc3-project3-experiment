@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <simconf>
   <simulation>
-    <title>2_receivers</title>
+    <title>My simulation</title>
     <randomseed>123456</randomseed>
     <motedelay_us>1000000</motedelay_us>
     <radiomedium>
@@ -16,7 +16,7 @@
     </events>
     <motetype>
       org.contikios.cooja.contikimote.ContikiMoteType
-      <identifier>mtype56242109</identifier>
+      <identifier>mtype767402779</identifier>
       <description>Cooja Mote Type #1</description>
       <source>[CONFIG_DIR]/../sender.c</source>
       <commands>make -j$(CPUS) sender.cooja TARGET=cooja</commands>
@@ -26,6 +26,7 @@
       <moteinterface>org.contikios.cooja.contikimote.interfaces.ContikiMoteID</moteinterface>
       <moteinterface>org.contikios.cooja.contikimote.interfaces.ContikiRS232</moteinterface>
       <moteinterface>org.contikios.cooja.contikimote.interfaces.ContikiBeeper</moteinterface>
+      <moteinterface>org.contikios.cooja.interfaces.RimeAddress</moteinterface>
       <moteinterface>org.contikios.cooja.contikimote.interfaces.ContikiIPAddress</moteinterface>
       <moteinterface>org.contikios.cooja.contikimote.interfaces.ContikiRadio</moteinterface>
       <moteinterface>org.contikios.cooja.contikimote.interfaces.ContikiButton</moteinterface>
@@ -39,7 +40,7 @@
     </motetype>
     <motetype>
       org.contikios.cooja.contikimote.ContikiMoteType
-      <identifier>mtype651001710</identifier>
+      <identifier>mtype295177512</identifier>
       <description>Cooja Mote Type #2</description>
       <source>[CONFIG_DIR]/../receiver.c</source>
       <commands>make -j$(CPUS) receiver.cooja TARGET=cooja</commands>
@@ -49,6 +50,7 @@
       <moteinterface>org.contikios.cooja.contikimote.interfaces.ContikiMoteID</moteinterface>
       <moteinterface>org.contikios.cooja.contikimote.interfaces.ContikiRS232</moteinterface>
       <moteinterface>org.contikios.cooja.contikimote.interfaces.ContikiBeeper</moteinterface>
+      <moteinterface>org.contikios.cooja.interfaces.RimeAddress</moteinterface>
       <moteinterface>org.contikios.cooja.contikimote.interfaces.ContikiIPAddress</moteinterface>
       <moteinterface>org.contikios.cooja.contikimote.interfaces.ContikiRadio</moteinterface>
       <moteinterface>org.contikios.cooja.contikimote.interfaces.ContikiButton</moteinterface>
@@ -62,7 +64,7 @@
     </motetype>
     <motetype>
       org.contikios.cooja.contikimote.ContikiMoteType
-      <identifier>mtype361197422</identifier>
+      <identifier>mtype892811259</identifier>
       <description>Cooja Mote Type #3</description>
       <source>[CONFIG_DIR]/../receiver.c</source>
       <commands>make -j$(CPUS) receiver.cooja TARGET=cooja RECEIVER_ID=3</commands>
@@ -72,6 +74,7 @@
       <moteinterface>org.contikios.cooja.contikimote.interfaces.ContikiMoteID</moteinterface>
       <moteinterface>org.contikios.cooja.contikimote.interfaces.ContikiRS232</moteinterface>
       <moteinterface>org.contikios.cooja.contikimote.interfaces.ContikiBeeper</moteinterface>
+      <moteinterface>org.contikios.cooja.interfaces.RimeAddress</moteinterface>
       <moteinterface>org.contikios.cooja.contikimote.interfaces.ContikiIPAddress</moteinterface>
       <moteinterface>org.contikios.cooja.contikimote.interfaces.ContikiRadio</moteinterface>
       <moteinterface>org.contikios.cooja.contikimote.interfaces.ContikiButton</moteinterface>
@@ -86,8 +89,8 @@
     <mote>
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>50.60959171176627</x>
-        <y>59.6906639505346</y>
+        <x>37.48759125991579</x>
+        <y>33.444054791806984</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -99,13 +102,13 @@
         <bitrate>250.0</bitrate>
       </interface_config>
       <interface_config>org.contikios.cooja.contikimote.interfaces.ContikiEEPROM</interface_config>
-      <motetype_identifier>mtype56242109</motetype_identifier>
+      <motetype_identifier>mtype767402779</motetype_identifier>
     </mote>
     <mote>
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>54.422955645445064</x>
-        <y>57.17317335606289</y>
+        <x>41.29685713527269</x>
+        <y>35.99161774772906</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -117,13 +120,13 @@
         <bitrate>250.0</bitrate>
       </interface_config>
       <interface_config>org.contikios.cooja.contikimote.interfaces.ContikiEEPROM</interface_config>
-      <motetype_identifier>mtype651001710</motetype_identifier>
+      <motetype_identifier>mtype295177512</motetype_identifier>
     </mote>
     <mote>
       <interface_config>
         org.contikios.cooja.interfaces.Position
-        <x>47.18039590639917</x>
-        <y>62.16030879049454</y>
+        <x>40.47998942340524</x>
+        <y>32.280748712256</y>
         <z>0.0</z>
       </interface_config>
       <interface_config>
@@ -135,7 +138,7 @@
         <bitrate>250.0</bitrate>
       </interface_config>
       <interface_config>org.contikios.cooja.contikimote.interfaces.ContikiEEPROM</interface_config>
-      <motetype_identifier>mtype361197422</motetype_identifier>
+      <motetype_identifier>mtype892811259</motetype_identifier>
     </mote>
   </simulation>
   <plugin>
@@ -154,7 +157,7 @@
       <skin>org.contikios.cooja.plugins.skins.GridVisualizerSkin</skin>
       <skin>org.contikios.cooja.plugins.skins.TrafficVisualizerSkin</skin>
       <skin>org.contikios.cooja.plugins.skins.UDGMVisualizerSkin</skin>
-      <viewport>11.668957961845791 0.0 0.0 11.668957961845791 -360.05362730289653 -569.4369392625432</viewport>
+      <viewport>12.273524685112362 0.0 0.0 12.273524685112362 -278.46851307761506 -242.4712875288319</viewport>
     </plugin_config>
     <width>400</width>
     <z>3</z>
@@ -170,7 +173,7 @@
       <coloring />
     </plugin_config>
     <width>1254</width>
-    <z>0</z>
+    <z>2</z>
     <height>240</height>
     <location_x>400</location_x>
     <location_y>160</location_y>
@@ -207,7 +210,7 @@
   <plugin>
     org.contikios.cooja.plugins.ScriptRunner
     <plugin_config>
-      <script>TIMEOUT(120000);
+      <script>TIMEOUT(1200000);
 
 while (true) {
     YIELD();
@@ -218,13 +221,13 @@ while (true) {
         log.testOK();
     }
 }</script>
-      <active>false</active>
+      <active>true</active>
     </plugin_config>
-    <width>574</width>
-    <z>2</z>
-    <height>327</height>
-    <location_x>61</location_x>
-    <location_y>434</location_y>
+    <width>737</width>
+    <z>1</z>
+    <height>342</height>
+    <location_x>742</location_x>
+    <location_y>457</location_y>
   </plugin>
   <plugin>
     org.contikios.cooja.plugins.RadioLogger
@@ -236,10 +239,10 @@ while (true) {
       <analyzers name="6lowpan-pcap" />
     </plugin_config>
     <width>500</width>
-    <z>1</z>
+    <z>0</z>
     <height>300</height>
-    <location_x>756</location_x>
-    <location_y>449</location_y>
+    <location_x>113</location_x>
+    <location_y>506</location_y>
   </plugin>
 </simconf>
 

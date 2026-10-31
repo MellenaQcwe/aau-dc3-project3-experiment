@@ -7,3 +7,4 @@ pcap*
 *.bak
 *.pcap
 __pycache__/
+*results*
