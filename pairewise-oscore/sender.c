@@ -9,6 +9,8 @@
 #define NUM_RECEIVERS 2
 #define NUM_COMMANDS 100
 
+static int current_receiver_id;
+
 #define SEND_INTERVAL (10 * CLOCK_SECOND)
 #define START_DELAY   (15 * CLOCK_SECOND)
 
@@ -23,16 +25,10 @@ static coap_message_t request[1];
 /* Demonstration keys only: do not use in production. */
 static const uint8_t master_secrets[NUM_RECEIVERS][16] = {
   {
-    0x01, 0x02, 0x03, 0x04,
-    0x05, 0x06, 0x07, 0x08,
-    0x09, 0x0a, 0x0b, 0x0c,
-    0x0d, 0x0e, 0x0f, 0x10
+    0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10
   },
   {
-    0x11, 0x12, 0x13, 0x14,
-    0x15, 0x16, 0x17, 0x18,
-    0x19, 0x1a, 0x1b, 0x1c,
-    0x1d, 0x1e, 0x1f, 0x20
+    0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x20
   }
 };
 
@@ -48,13 +44,30 @@ static unsigned long timeout_count;
 static void
 response_handler(coap_message_t *response)
 {
+  const uint8_t *payload = NULL;
+  int payload_len;
+
   if(response == NULL) {
     timeout_count++;
-    printf("RESULT,TIMEOUT\n");
-  } else {
-    response_count++;
-    printf("RESULT,RESPONSE\n");
+    printf("OSCORE_TIMEOUT,receiver=%d\n",
+           current_receiver_id);
+    return;
   }
+
+  if(response->code == OSCORE_DECRYPTION_ERROR) {
+    printf("OSCORE_DECRYPTION_FAILED,receiver=%d\n",
+          current_receiver_id);
+    return;
+  }
+
+  payload_len = coap_get_payload(response, &payload);
+  printf("OSCORE_RESPONSE,receiver=%d,code=%u,payload=%.*s\n",
+         current_receiver_id,
+         response->code,
+         payload_len,
+         (const char *)payload);
+
+  response_count++;
 }
 
 PROCESS_THREAD(oscore_sender_process, ev, data)
@@ -126,7 +139,8 @@ PROCESS_THREAD(oscore_sender_process, ev, data)
         sizeof(payload) - 1
       );
 
-      printf("OSCORE_SEND,command=%d,receiver_id=%d\n", command, i + 2);
+      current_receiver_id = i + 2;
+      printf("OSCORE_SEND,command=%d,receiver_id=%d\n", command, current_receiver_id);
 
       COAP_BLOCKING_REQUEST(
           &endpoints[i],
@@ -140,7 +154,7 @@ PROCESS_THREAD(oscore_sender_process, ev, data)
   }
 
   printf("PAIRWISE_OSCORE_END,receivers=%d,responses=%lu,timeouts=%lu\n",
-         NUM_RECEIVERS, response_count, timeout_count);
+         (current_receiver_id - 1), response_count, timeout_count);
 
   PROCESS_END();
 }

@@ -1,0 +1,6 @@
+{
+  "command_sent": "\\b(?:OSCORE_SEND|PAIRWISE_OSCORE_SEND|LIGHT_ON_SENT)\\b",
+  "authenticated_received": "\\b(?:OSCORE_RECEIVED|OSCORE_AUTH_OK|AUTHENTICATED_LIGHT_ON)\\b",
+  "authentication_failed": "\\b(?:OSCORE_AUTH_FAIL|AUTHENTICATION_FAILED|DECRYPT_FAIL)\\b",
+  "experiment_end": "\\bPAIRWISE_OSCORE_END\\b"
+}

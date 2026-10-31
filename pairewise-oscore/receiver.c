@@ -11,10 +11,7 @@
 
 #if RECEIVER_ID == 2
 static const uint8_t master_secret[16] = {
-  0x01, 0x02, 0x03, 0x04,
-  0x05, 0x06, 0x07, 0x08,
-  0x09, 0x0a, 0x0b, 0x0c,
-  0x0d, 0x0e, 0x0f, 0x10
+  0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10
 };
 #elif RECEIVER_ID == 3
 static const uint8_t master_secret[16] = {
@@ -84,7 +81,7 @@ light_post_handler(coap_message_t *request,
   len = coap_get_payload(request, &payload);
 
   if(len > 0 && payload != NULL) {
-    printf("OSCORE_RECEIVED,receiver=%d,command=%.*s\n",
+    printf("OSCORE_REQUEST,receiver=%d,command=%.*s\n",
            RECEIVER_ID, len, (const char *)payload);
   }
 

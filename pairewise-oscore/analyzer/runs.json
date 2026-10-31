@@ -1,0 +1,4 @@
+[
+  {"name": "pairwise_n2", "mode": "pairwise", "receivers": 2, "pcap": "pairwise_n2.pcap", "log": "pairwise_n2.testlog"},
+  {"name": "pairwise_n4", "mode": "pairwise", "receivers": 4, "pcap": "pairwise_n4.pcap", "log": "pairwise_n4.testlog"}
+]

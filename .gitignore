@@ -1,3 +1,9 @@
 build*
 pcap*
 .vscode
+*.log
+*.testlog
+*.tmp
+*.bak
+*.pcap
+__pycache__/
