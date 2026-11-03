@@ -15,8 +15,8 @@ from pathlib import Path
 FIELDS = ['frame.number', 'frame.time_epoch', 'frame.len', 'wpan.src16', 'wpan.src64', 'ipv6.src', 'ipv6.dst', 'coap.code', 'frame.protocols']
 DEFAULT_PATTERNS = {
     'command_sent': r'\b(?:OSCORE_REQUEST_SEND|PAIRWISE_OSCORE_SEND|LIGHT_ON_SENT)\b',
-    'authenticated_received': r'\b(?:OSCORE_REQUEST_RECEIVED|OSCORE_AUTH_OK|AUTHENTICATED_LIGHT_ON)\b',
-    'authentication_failed': r'\b(?:OSCORE_DECRYPTION_FAILED|OSCORE_AUTH_FAIL|AUTHENTICATION_FAILED|DECRYPT_FAIL)\b',
+    'command_received': r'\b(?:OSCORE_REQUEST_RECEIVED|OSCORE_AUTH_OK|AUTHENTICATED_LIGHT_ON)\b',
+    'command_failed': r'\b(?:OSCORE_DECRYPTION_FAILED|OSCORE_AUTH_FAIL|AUTHENTICATION_FAILED|DECRYPT_FAIL)\b',
     'experiment_end': r'\bPAIRWISE_OSCORE_END\b',
 }
 LOG_TIME = re.compile(r'^\s*(\d+(?:\.\d+)?)\s*(?:\t|\s+)ID\s*:\s*(\d+)\s*(?:\t|\s+)(.*)$')
@@ -116,8 +116,8 @@ def main():
             'pcap_last_epoch_s': max(times) if times else '',
             'pcap_span_s': round(max(times) - min(times), 6) if times else '',
             'command_sent_log_matches': counts['command_sent'],
-            'authenticated_received_log_matches': counts['authenticated_received'],
-            'authentication_failed_log_matches': counts['authentication_failed'],
+            'command_received_log_matches': counts['command_received'],
+            'command_failed_log_matches': counts['command_failed'],
             'experiment_end_log_matches': counts['experiment_end'],
             'matched_log_events': len(events),
             'pcap_file': str(pcap), 'log_file': str(log),

@@ -1,5 +1,11 @@
 [
   {"name": "pairwise_n2", "mode": "pairwise", "receivers": 2, "pcap": "pairwise_n2.pcap", "log": "pairwise_n2.testlog"},
   {"name": "pairwise_n4", "mode": "pairwise", "receivers": 4, "pcap": "pairwise_n4.pcap", "log": "pairwise_n4.testlog"},
-  {"name": "pairwise_n8", "mode": "pairwise", "receivers": 8, "pcap": "pairwise_n8.pcap", "log": "pairwise_n8.testlog"}
+  {"name": "pairwise_n8", "mode": "pairwise", "receivers": 8, "pcap": "pairwise_n8.pcap", "log": "pairwise_n8.testlog"},
+  {"name": "pairwise_n12", "mode": "pairwise", "receivers": 12, "pcap": "pairwise_n12.pcap", "log": "pairwise_n12.testlog"},
+  {"name": "pairwise_n16", "mode": "pairwise", "receivers": 16, "pcap": "pairwise_n16.pcap", "log": "pairwise_n16.testlog"},
+  {"name": "pairwise_n20", "mode": "pairwise", "receivers": 20, "pcap": "pairwise_n20.pcap", "log": "pairwise_n20.testlog"},
+  {"name": "pairwise_n24", "mode": "pairwise", "receivers": 24, "pcap": "pairwise_n24.pcap", "log": "pairwise_n24.testlog"},
+  {"name": "pairwise_n28", "mode": "pairwise", "receivers": 28, "pcap": "pairwise_n28.pcap", "log": "pairwise_n28.testlog"},
+  {"name": "pairwise_n32", "mode": "pairwise", "receivers": 32, "pcap": "pairwise_n32.pcap", "log": "pairwise_n32.testlog"}
 ]

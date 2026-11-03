@@ -6,8 +6,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#define NUM_RECEIVERS 8
+#define NUM_RECEIVERS 32
 #define NUM_COMMANDS 100
+#define MASTER_SECRET_LEN 16
 
 static int current_receiver_id;
 
@@ -23,44 +24,35 @@ static oscore_ctx_t contexts[NUM_RECEIVERS];
 static coap_message_t request[1];
 
 /* Demonstration keys only: do not use in production. */
-static const uint8_t master_secrets[NUM_RECEIVERS][16] = {
-  {
-    0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10
-  },
-  {
-    0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x20
-  },
-  {
-    0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f, 0x30
-  },
-  {
-    0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f, 0x40
-  },
-  {
-    0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x50
-  },
-  {
-    0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f, 0x60
-  },
-  {
-    0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70
-  },
-  {
-    0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f, 0x80
-  }
-};
+static uint8_t master_secrets[NUM_RECEIVERS][MASTER_SECRET_LEN];
+static uint8_t server_ids[NUM_RECEIVERS][1];
 
 static const uint8_t client_id[] = { 0x01 };
-static const uint8_t server_ids[NUM_RECEIVERS][1] = {
-  { 0x02 },
-  { 0x03 },
-  { 0x04 },
-  { 0x05 },
-  { 0x06 },
-  { 0x07 },
-  { 0x08 },
-  { 0x09 }
-};
+
+static void
+initialize_receiver_credentials(void)
+{
+  int i;
+  int j;
+
+  for(i = 0; i < NUM_RECEIVERS; i++) {
+
+    uint8_t receiver_id = (uint8_t)(i + 2);
+
+    server_ids[i][0] = receiver_id;
+
+    for(j = 0; j < MASTER_SECRET_LEN; j++) {
+      master_secrets[i][j] =
+        (uint8_t)((j + 1) ^ receiver_id);
+    }
+
+    printf("OSCORE_CREDENTIALS_INITIALIZATION...,receiver=%d.server_id=%02x,master_secret=", receiver_id, server_ids[i][0]);
+    for(j = 0; j < MASTER_SECRET_LEN; j++) {
+      printf("%02x", master_secrets[i][j]);
+    }
+    printf("\n");
+  }
+}
 
 static unsigned long response_count;
 static unsigned long timeout_count;
@@ -78,12 +70,19 @@ response_handler(coap_message_t *response)
     return;
   }
 
+  // Handle Errors
   if(response->code == OSCORE_DECRYPTION_ERROR) {
     printf("OSCORE_DECRYPTION_FAILED,receiver=%d\n",
           current_receiver_id);
     return;
   }
+  if(response->code == UNAUTHORIZED_4_01) {
+    printf("OSCORE_AUTHORIZATION_FAILED,receiver=%d\n",
+          current_receiver_id);
+    return;
+  }
 
+  // Handle Success
   payload_len = coap_get_payload(response, &payload);
   printf("OSCORE_RESPONSE_RECEIVED,receiver=%d,code=%u,payload=%.*s\n",
          current_receiver_id,
@@ -104,6 +103,8 @@ PROCESS_THREAD(oscore_sender_process, ev, data)
   PROCESS_BEGIN();
 
   printf("PAIRWISE_OSCORE_START\n");
+
+  initialize_receiver_credentials();
 
   for(i = 0; i < NUM_RECEIVERS; i++) {
 
