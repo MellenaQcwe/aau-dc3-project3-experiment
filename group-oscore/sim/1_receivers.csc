@@ -16,7 +16,7 @@
     </events>
     <motetype>
       org.contikios.cooja.contikimote.ContikiMoteType
-      <identifier>mtype373342824</identifier>
+      <identifier>mtype479329975</identifier>
       <description>Cooja Mote Type #1</description>
       <source>[CONFIG_DIR]/../sender.c</source>
       <commands>make -j$(CPUS) sender.cooja TARGET=cooja</commands>
@@ -40,7 +40,7 @@
     </motetype>
     <motetype>
       org.contikios.cooja.contikimote.ContikiMoteType
-      <identifier>mtype258708127</identifier>
+      <identifier>mtype358470801</identifier>
       <description>Cooja Mote Type #2</description>
       <source>[CONFIG_DIR]/../receiver.c</source>
       <commands>make -j$(CPUS) receiver.cooja TARGET=cooja</commands>
@@ -64,7 +64,7 @@
     </motetype>
     <motetype>
       org.contikios.cooja.contikimote.ContikiMoteType
-      <identifier>mtype441327184</identifier>
+      <identifier>mtype736206985</identifier>
       <description>Cooja Mote Type #1</description>
       <source>[CONFIG_DIR]/../receiver.c</source>
       <commands>make -j$(CPUS) receiver.cooja TARGET=cooja</commands>
@@ -88,7 +88,7 @@
     </motetype>
     <motetype>
       org.contikios.cooja.contikimote.ContikiMoteType
-      <identifier>mtype578039020</identifier>
+      <identifier>mtype19886189</identifier>
       <description>Cooja Mote Type #2</description>
       <source>[CONFIG_DIR]/../sender.c</source>
       <commands>make -j$(CPUS) sender.cooja TARGET=cooja</commands>
@@ -126,7 +126,7 @@
         <bitrate>250.0</bitrate>
       </interface_config>
       <interface_config>org.contikios.cooja.contikimote.interfaces.ContikiEEPROM</interface_config>
-      <motetype_identifier>mtype441327184</motetype_identifier>
+      <motetype_identifier>mtype736206985</motetype_identifier>
     </mote>
     <mote>
       <interface_config>
@@ -144,7 +144,7 @@
         <bitrate>250.0</bitrate>
       </interface_config>
       <interface_config>org.contikios.cooja.contikimote.interfaces.ContikiEEPROM</interface_config>
-      <motetype_identifier>mtype578039020</motetype_identifier>
+      <motetype_identifier>mtype19886189</motetype_identifier>
     </mote>
   </simulation>
   <plugin>

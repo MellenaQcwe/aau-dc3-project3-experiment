@@ -72,32 +72,32 @@ PROCESS_THREAD(er_example_server, ev, data)
     10,
     sender_id, sizeof(sender_id),
     receiver_id, sizeof(receiver_id),
-    group_id, sizeof(group_id),
-    group_id
+    group_id, sizeof(group_id),  /* id_context */
+    group_id, sizeof(group_id)   /* gid, gid_len */ 
 );
 
   uint8_t key_id[1] = { 0x25 };
-  oscore_ctx_t *ctx;
-ctx = oscore_find_ctx_by_rid(key_id, sizeof(key_id));
+    oscore_ctx_t *ctx;
+  ctx = oscore_find_ctx_by_rid(key_id, sizeof(key_id));
 
-if(ctx == NULL) {
-  LOG_ERR("Group OSCORE context not found\n");
-  PROCESS_EXIT();
-}
+  if(ctx == NULL) {
+    LOG_ERR("Group OSCORE context not found\n");
+    PROCESS_EXIT();
+  }
 
-oscore_add_group_keys(
-  ctx,
-  server_public_key,
-  server_private_key,
-  client_public_key,
-  COSE_Algorithm_ES256,
-  COSE_Elliptic_Curve_P256
-);
+  oscore_add_group_keys(
+    ctx,
+    server_public_key,
+    server_private_key,
+    client_public_key,
+    COSE_Algorithm_ES256,
+    COSE_Elliptic_Curve_P256
+  );
 
-LOG_INFO("Group OSCORE keys configured\n");
+  LOG_INFO("Group OSCORE keys configured\n");
 
-coap_activate_resource(&res_post, "test/post");
-  
+  coap_activate_resource(&res_post, "light");
+    
   while(1) {
     PROCESS_WAIT_EVENT();
   }                         

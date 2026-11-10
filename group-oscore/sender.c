@@ -5,8 +5,8 @@
 #include "contiki-net.h"
 #include "coap-engine.h"
 #include "coap-callback-api.h"
-
 #include "oscore.h"
+#include "oscore-crypto.h"
 
 /* Log configuration */
 #include "coap-log.h"
@@ -119,7 +119,7 @@ void my_callback_f(coap_callback_request_state_t *callback_state)
 PROCESS_THREAD(er_example_client, ev, data)
 {
   static coap_endpoint_t server_ep;
-  static coap_callback_request_state_t my_callback_request_state;
+  static coap_callback_request_state_t cb_request_state;
   static coap_message_t request[1];
 
   PROCESS_BEGIN();
@@ -142,8 +142,8 @@ PROCESS_THREAD(er_example_client, ev, data)
     10,
     sender_id, sizeof(sender_id),
     receiver_id, sizeof(receiver_id),
-    group_id, sizeof(group_id),
-    group_id
+    group_id, sizeof(group_id),  /* id_context */
+    group_id, sizeof(group_id)   /* gid, gid_len */
   );
   LOG_INFO("CHECKPOINT 4: After oscore_derive_ctx\n");
 
@@ -167,35 +167,66 @@ PROCESS_THREAD(er_example_client, ev, data)
 
     if(ev == PROCESS_EVENT_TIMER && data == &et) {
 
-      LOG_INFO("TEST A.1: Timer fired\n");
+      LOG_INFO("Timer fired\n");
 
       coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0);
 
-      coap_set_header_uri_path(request, "test/post");
+      coap_set_header_uri_path(request, "light");
 
-      static const char payload[] = "Plain CoAP test";
+      static const char payload[] = "LIGHT_ON";
 
       coap_set_payload(
-        request,
-        (uint8_t *)payload,
-        sizeof(payload) - 1
+          request,
+          (uint8_t *)payload,
+          sizeof(payload) - 1
       );
 
       coap_set_token(request, token_next(), 8);
 
-      LOG_INFO("TEST A.2: Before coap_send_request\n");
+      LOG_INFO("CLIENT: attaching Group OSCORE context\n");
+      coap_set_oscore(request, &context);
 
+      LOG_INFO("CLIENT: calling coap_send_request\n");
       coap_send_request(
-        &my_callback_request_state,
-        &server_ep,
-        request,
-        my_callback_f
+          &cb_request_state,
+          &server_ep,
+          request,
+          my_callback_f
       );
+      LOG_INFO("CLIENT: returned from coap_send_request\n");
 
-      LOG_INFO("TEST A.3: After coap_send_request\n");
-
-      break;
+      //break;  //While loop will continue to send requests every 10 seconds
     }
+#ifdef WITH_GROUPCOM
+    else if(ev == oscore_pe_message_signed) {
+
+        oscore_messages_to_sign_entry_t *item =
+            (oscore_messages_to_sign_entry_t *)data;
+
+        LOG_INFO("CLIENT: signing completion event received\n");
+
+        if(item != NULL) {
+
+            LOG_INFO("CLIENT: signing result = %u\n",
+                    (unsigned)item->result);
+
+            if(item->result == 1) {
+
+                LOG_INFO("CLIENT: signing successful\n");
+
+                coap_client_send_postcrypto(
+                    &cb_request_state
+                );
+
+            } else {
+
+                LOG_ERR("CLIENT: signing failed, request not sent\n");
+            }
+
+            oscore_queue_message_to_sign_done(item);
+        }
+    }
+#endif
   }
 
   PROCESS_END();
